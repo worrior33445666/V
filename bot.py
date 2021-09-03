@@ -33,7 +33,7 @@ async def search(client, InlineQuery : InlineQuery):
 
     results = []
 
-    async for vid in videos:
+    for vid in videos:
         results.append(InlineQueryResultArticle(
             title=vid.title,
             input_message_content=InputTextMessageContent(
