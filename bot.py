@@ -77,7 +77,16 @@ async def download_video(client, message : Message):
         ydl.download([url])
 
     for file in os.listdir("downloads"):
-        await message.reply_video(f"downloads/{file}", caption="Here Is your Requested Video")
+        if file.endswith(".mp4"):
+            await message.reply_video(f"downloads/{file}", caption="Here Is your Requested Video")
+        else:
+            print("Not in downloads")
+
+    for file in os.listdir('.'):
+        if file.endswith(".mp4"):
+            await message.reply_video(f"{file}", caption="Here Is your Requested Video")
+        else:
+            print("Not in pwd")
 
 
 
