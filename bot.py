@@ -73,7 +73,7 @@ async def download_video(client, message : Message):
             'ignoreerrors': True,
         }
 
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+    with youtube_dl.YoutubeDL() as ydl:
         ydl.download([url])
 
     for file in os.listdir("downloads"):
