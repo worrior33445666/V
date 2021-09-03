@@ -24,8 +24,10 @@ else:
 def link_fil(filter, client, update):
     if "www.pornhub" in update.text:
         return True
+    else:
+        return False
 
-link_filter = filters.create()
+#link_filter = filters.create()
 
 @app.on_inline_query()
 async def search(client, InlineQuery : InlineQuery):
