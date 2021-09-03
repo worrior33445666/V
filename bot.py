@@ -21,12 +21,18 @@ else:
     print("Download Path Created")
 
 
+def link_fil(filter, client, update):
+    if "www.pornhub" in update.text:
+        return True
+
+link_filter = filters.create()
+
 @app.on_inline_query()
 async def search(client, InlineQuery : InlineQuery):
     query = InlineQuery.query
     backend = AioHttpBackend()
     api = PornhubApi(backend=backend)
-    src = await api.search.search(query, ordering="mostviewed")
+    src = await api.search.search(query)#, ordering="mostviewed")
     videos = src.videos
     await backend.close()
     
