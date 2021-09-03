@@ -27,7 +27,7 @@ def link_fil(filter, client, update):
     else:
         return False
 
-#link_filter = filters.create()
+link_filter = filters.create(link_fil, name="link_filter")
 
 @app.on_inline_query()
 async def search(client, InlineQuery : InlineQuery):
@@ -45,7 +45,7 @@ async def search(client, InlineQuery : InlineQuery):
         results.append(InlineQueryResultArticle(
             title=vid.title,
             input_message_content=InputTextMessageContent(
-                message_text=f"/porn {vid.url}"
+                message_text=f"{vid.url}"
             ),
             description=f"Duration : {vid.duration}\nViews : {vid.views}\nRating : {vid.rating}",
             thumb_url=vid.thumb
@@ -54,12 +54,14 @@ async def search(client, InlineQuery : InlineQuery):
     await InlineQuery.answer(results)
     
 
-@app.on_message(filters.command("porn"))
+@app.on_message(link_filter)
 async def download_video(client, message : Message):
     await message.reply("Downloading...")
-    url = message.command[1]
-    a = url.replace("unknownview_video.php", "")
+    url = message.text
     print(url)
+    a = url.replace("unknownview_video.php", "")
+    print(a)
+    # print(url)
     # path = wget.download(url)
     # print(path)
 
