@@ -81,7 +81,7 @@ async def download_video(client, message : Message):
 
 
 
-@app.on_message(link_filter)
+@app.on_message(filters.command("cc"))
 async def download_video(client, message : Message):
     files = os.listdir("downloads")
     await message.reply(files)
