@@ -55,15 +55,16 @@ async def search(client, InlineQuery : InlineQuery):
 
 @app.on_message(link_filter)
 async def download_video(client, message : Message):
+    print(message.text)
     await message.reply("What would like to do?", 
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("Download", f"download_{message.text}"), InlineKeyboardButton("Watch Video",url=message.text)]
+                [InlineKeyboardButton("Download", f"d_{message.text}"), InlineKeyboardButton("Watch Video",url=message.text)]
             ])
             )
 
 
 
-@app.on_message(filters.regex("^download"))
+@app.on_message(filters.regex("^d"))
 async def download_video(client, callback : CallbackQuery):
     url = callback.data.split("_")[1]
     await callback.message.edit("Downloading...")
