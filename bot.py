@@ -1,9 +1,8 @@
 from pornhub_api import PornhubApi
 from pornhub_api.backends.aiohttp import AioHttpBackend
-from pornhub_api.modules import video
 from pyrogram import Client, filters
-from pyrogram.types import (InlineQuery, InlineQueryResultArticle,
-                            InputTextMessageContent, Message)
+from pyrogram.types import (InlineQuery, InlineQueryResultArticle, CallbackQuery,
+                            InputTextMessageContent, Message, InlineKeyboardMarkup, InlineKeyboardButton)
 import youtube_dl
 import os
 
@@ -34,7 +33,7 @@ async def search(client, InlineQuery : InlineQuery):
     query = InlineQuery.query
     backend = AioHttpBackend()
     api = PornhubApi(backend=backend)
-    src = await api.search.search(query)#, ordering="mostviewed")
+    src = api.search.search(query)#, ordering="mostviewed")
     videos = src.videos
     await backend.close()
     
@@ -56,17 +55,21 @@ async def search(client, InlineQuery : InlineQuery):
 
 @app.on_message(link_filter)
 async def download_video(client, message : Message):
-    await message.reply("Downloading...")
-    url = message.text
-    print(url)
-    a = url.replace("unknownview_video.php", "")
-    print(a)
-    # print(url)
-    # path = wget.download(url)
-    # print(path)
+    await message.reply("What would like to do?", 
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("Download", f"download_{message.text}"), InlineKeyboardButton("Watch Video",url=message.text)]
+            ])
+            )
+
+
+
+@app.on_message(filters.regex("^download"))
+async def download_video(client, callback : CallbackQuery):
+    url = callback.data.split("_")[1]
+    await callback.message.edit("Downloading...")
 
     ydl_opts = {
-            'format': 'best',
+            #'format': 'best',
             'outtmpl': "downloads",
             'nooverwrites': True,
             'no_warnings': False,
@@ -78,16 +81,15 @@ async def download_video(client, message : Message):
 
     for file in os.listdir("downloads"):
         if file.endswith(".mp4"):
-            await message.reply_video(f"downloads/{file}", caption="Here Is your Requested Video")
+            await callback.message.reply_video(f"downloads/{file}", caption="Here Is your Requested Video")
         else:
             print("Not in downloads")
 
     for file in os.listdir('.'):
         if file.endswith(".mp4"):
-            await message.reply_video(f"{file}", caption="Here Is your Requested Video")
+            await callback.message.reply_video(f"{file}", caption="Here Is your Requested Video")
         else:
-            print("Not in pwd")
-
+            print("Not in pwd")    
 
 
 @app.on_message(filters.command("cc"))
