@@ -54,7 +54,7 @@ async def search(client, InlineQuery : InlineQuery):
     
 
 @app.on_message(link_filter)
-async def download_video(client, message : Message):
+async def options(client, message : Message):
     await message.reply("What would like to do?", 
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("Download", f"d_{message.text}"), InlineKeyboardButton("Watch Video",url=message.text)]
