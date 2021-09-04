@@ -63,7 +63,7 @@ async def options(client, message : Message):
 
 
 
-@app.on_message(filters.regex("^d"))
+@app.on_callback_query(filters.regex("^d"))
 async def download_video(client, callback : CallbackQuery):
     url = callback.data.split("_")[1]
     print(url)
