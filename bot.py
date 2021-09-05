@@ -3,12 +3,13 @@ from pornhub_api.backends.aiohttp import AioHttpBackend
 from pyrogram import Client, filters
 from pyrogram.types import (InlineQuery, InlineQueryResultArticle, CallbackQuery,
                             InputTextMessageContent, Message, InlineKeyboardMarkup, InlineKeyboardButton)
-from pyrogram.types.messages_and_media import message
+from pyrogram.errors.exceptions import UserNotParticipant
 import youtube_dl
 import os
 import asyncio
 
 from config import Config
+from database import Data
 from pyromod.helpers import ikb
 
 app = Client("pornhub_bot",
@@ -38,6 +39,27 @@ def link_fil(filter, client, update):
 
 link_filter = filters.create(link_fil, name="link_filter")
 
+def joined():
+
+    def decorator(func):
+
+        async def wrapped(client, message : Message):
+
+            try:
+                check = await app.get_chat_member("SJ_Bots", message.from_user.id)
+                if check.status in ['member','administrator','creator']:
+                    await func(client, message)
+                else:
+                    await message.reply("💡 You must join our channel in order to use this bot",
+                    reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("JOIN CHANNEL", url="https://t.me/SJ_Bots")]]))
+            except UserNotParticipant as e:
+                await message.reply("💡 You must join our channel in order to use this bot",
+                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("JOIN CHANNEL", url="https://t.me/SJ_Bots")]]))
+
+        return wrapped
+
+    return decorator
+
 @app.on_inline_query()
 async def search(client, InlineQuery : InlineQuery):
     query = InlineQuery.query
@@ -64,6 +86,7 @@ async def search(client, InlineQuery : InlineQuery):
 
 
 @app.on_message(filters.command("start"))
+@joined()
 async def start(client, message : Message):
     await message.reply(f"**Hello, @{message.from_user.username}**,\n"
                         "➖➖➖➖➖➖➖➖➖➖➖➖\n"
@@ -71,9 +94,14 @@ async def start(client, message : Message):
                         "And Download Them For You\n"
                         "➖➖➖➖➖➖➖➖➖➖➖➖\n"
                         "Click The Buttons Below To Search", reply_markup=InlineKeyboardMarkup([[btn1, btn2]]))
+
+    check = await Data.is_in_db(message.from_user.id)
+    if check == False:
+        await Data.add_new_user(message.from_user.id)
     
 
 @app.on_message(link_filter)
+@joined()
 async def options(client, message : Message):
     print(message.text)
     await message.reply("What would like to do?", 
@@ -93,7 +121,7 @@ async def download_video(client, callback : CallbackQuery):
 
     ydl_opts = {
             #'format': 'best',
-            'outtmpl': "downloads",
+            'outtmpl': "downloads", 
             'nooverwrites': True,
             'no_warnings': False,
             'ignoreerrors': True,
@@ -130,7 +158,34 @@ async def download_video(client, message : Message):
     files = os.listdir("downloads")
     await message.reply(files)
 
+@app.on_message(filters.command("broadcast") & filters.reply & filters.user([-1048643192, -1903946976]))
+async def stats(client, message : Message):
+    users = await Data.get_user_ids()
+    tmsg = message.reply_to_message.text.markdown
 
+    msg = await message.reply("Broadcast started")
+
+    fails = 0
+    success = 0
+
+    for user in users:
+        try:
+            await app.send_message(int(user), tmsg)
+            success += 1
+        except:
+            fails += 1
+
+        quotient = (fails + success)/len(users)
+        percentage = float(quotient * 100)
+        await msg.edit(f"**Broadcast started**\n\nTotal Users : {len(users)}\nProgress : {percentage} %")
+
+    await msg.edit(f"Broadcast Completed**\n\nTotal Users : {len(users)}\nSuccess : {success}\nFails : {fails}")
+
+
+@app.on_message(filters.command("stats") & filters.user([-1048643192, -1903946976]))
+async def stats(client, message : Message):
+    count = await Data.count_users()
+    await message.reply(f"**STATS**\nTotal Users : {count}")
 
 
 
