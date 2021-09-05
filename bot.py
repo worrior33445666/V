@@ -21,6 +21,9 @@ if os.path.exists("downloads"):
 else:
     print("Download Path Created")
 
+btn1 = InlineKeyboardButton("Search Here",switch_inline_query_current_chat="",)
+btn2 = InlineKeyboardButton("Go Inline", switch_inline_query="")
+
 
 async def run_async(func, *args, **kwargs):
     loop = asyncio.get_running_loop()
@@ -62,8 +65,6 @@ async def search(client, InlineQuery : InlineQuery):
 
 @app.on_message(filters.command("start"))
 async def start(client, message : Message):
-    btn1 = InlineKeyboardButton("Search Here",switch_inline_query_current_chat="porn",)
-    btn2 = InlineKeyboardButton("Go Inline", switch_inline_query="porn")
     await message.reply(f"**Hello, @{message.from_user.username}**,\n"
                         "➖➖➖➖➖➖➖➖➖➖➖➖\n"
                         "This Bot Can Search **Pornhub** Videos\n"
@@ -114,7 +115,8 @@ async def download_video(client, callback : CallbackQuery):
     for file in os.listdir('.'):
         if file.endswith(".mp4"):
             print("found pwd")
-            await callback.message.reply_video(f"{file}", caption="Here Is your Requested Video")
+            await callback.message.reply_video(f"{file}", caption="**Here Is your Requested Video**\n@SJ_Bots",
+                                reply_markup=InlineKeyboardMarkup([[btn1, btn2]]))
             os.remove(f"{file}")
             break
         else:
