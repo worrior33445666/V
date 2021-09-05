@@ -7,7 +7,7 @@ from pymongo.database import Database
 mongo = motor.motor_asyncio.AsyncIOMotorClient(Config.MONGO)#, ssl_cert_reqs=ssl.CERT_NONE)
 
 db : Database = mongo["SJBots"]
-users : Collection = db["RemoveBGBot"]
+users : Collection = db["PornhubBot"]
 
 
 class Data:
