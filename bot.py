@@ -5,6 +5,7 @@ from pyrogram.types import (InlineQuery, InlineQueryResultArticle, CallbackQuery
                             InputTextMessageContent, Message, InlineKeyboardMarkup, InlineKeyboardButton)
 import youtube_dl
 import os
+import asyncio
 
 from config import Config
 import wget
@@ -18,6 +19,11 @@ if os.path.exists("downloads"):
     print("Download Path Exist")
 else:
     print("Download Path Created")
+
+
+async def run_async(func, *args, **kwargs):
+    loop = asyncio.get_running_loop()
+    return await loop.run_in_executor(None, func, *args, **kwargs)
 
 
 def link_fil(filter, client, update):
@@ -69,7 +75,7 @@ async def download_video(client, callback : CallbackQuery):
     print(callback.data)
     url = callback.data.split("_",1)[1]
     print(url)
-    await callback.message.edit("Downloading...")
+    msg = await callback.message.edit("Downloading...")
 
     ydl_opts = {
             #'format': 'best',
@@ -80,25 +86,32 @@ async def download_video(client, callback : CallbackQuery):
         }
 
     with youtube_dl.YoutubeDL() as ydl:
-        ydl.download([url])
+        run_async(ydl.download, [url])
 
     for file in os.listdir("downloads"):
         if file.endswith(".mp4"):
-            await callback.message.reply_video(f"downloads/{file}", caption="Here Is your Requested Video")
+            print("found downloads")
+            await callback.message.reply_video(f"downloads/{file}", caption="Here is your Requested Video")
+            os.remove(f"downloads/{file}")
         else:
             print("Not in downloads")
 
     for file in os.listdir('.'):
         if file.endswith(".mp4"):
+            print("found pwd")
             await callback.message.reply_video(f"{file}", caption="Here Is your Requested Video")
+            os.remove(f"{file}")
         else:
             print("Not in pwd")    
+
+    await msg.delete()
 
 
 @app.on_message(filters.command("cc"))
 async def download_video(client, message : Message):
     files = os.listdir("downloads")
     await message.reply(files)
+
 
 
 
