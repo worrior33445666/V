@@ -86,7 +86,7 @@ async def download_video(client, callback : CallbackQuery):
         }
 
     with youtube_dl.YoutubeDL() as ydl:
-        run_async(ydl.download, [url])
+        await run_async(ydl.download, [url])
 
     for file in os.listdir("downloads"):
         if file.endswith(".mp4"):
