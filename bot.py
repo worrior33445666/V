@@ -3,12 +3,13 @@ from pornhub_api.backends.aiohttp import AioHttpBackend
 from pyrogram import Client, filters
 from pyrogram.types import (InlineQuery, InlineQueryResultArticle, CallbackQuery,
                             InputTextMessageContent, Message, InlineKeyboardMarkup, InlineKeyboardButton)
+from pyrogram.types.messages_and_media import message
 import youtube_dl
 import os
 import asyncio
 
 from config import Config
-import wget
+from pyromod.helpers import ikb
 
 app = Client("pornhub_bot",
             api_id=Config.API_ID,
@@ -57,6 +58,18 @@ async def search(client, InlineQuery : InlineQuery):
         ))
 
     await InlineQuery.answer(results)
+
+
+@app.on_message(filters.command("start"))
+async def start(client, message : Message):
+    btn1 = InlineKeyboardButton("Search Here",switch_inline_query_current_chat="porn",)
+    btn2 = InlineKeyboardButton("Go Inline", switch_inline_query="porn")
+    await message.reply(f"**Hello, @{message.from_user.username}**,\n"
+                        "➖➖➖➖➖➖➖➖➖➖➖➖\n"
+                        "This Bot Can Search **Pornhub** Videos\n"
+                        "And Download Them For You\n"
+                        "➖➖➖➖➖➖➖➖➖➖➖➖\n"
+                        "Click The Buttons Below To Search", reply_markup=InlineKeyboardMarkup([[btn1, btn2]]))
     
 
 @app.on_message(link_filter)
@@ -86,23 +99,26 @@ async def download_video(client, callback : CallbackQuery):
         }
 
     with youtube_dl.YoutubeDL() as ydl:
-        await run_async(ydl.download, [url])
+        # meta = ydl.extract_info(url, download=False)
+        # formats = meta.get('formats', [meta])
+        # btn_list = []
+        # for f in formats:
+        #    btn_list.append([(f['resolution'], f"q_{f['ext']}_{url}")])
+        #    print(f['resolution'])
+        #     print(f)
 
-    for file in os.listdir("downloads"):
-        if file.endswith(".mp4"):
-            print("found downloads")
-            await callback.message.reply_video(f"downloads/{file}", caption="Here is your Requested Video")
-            os.remove(f"downloads/{file}")
-        else:
-            print("Not in downloads")
+        # await callback.message.edit("Choose your desired Quality", reply_markup=ikb(btn_list))
+
+        await run_async(ydl.download, [url])
 
     for file in os.listdir('.'):
         if file.endswith(".mp4"):
             print("found pwd")
             await callback.message.reply_video(f"{file}", caption="Here Is your Requested Video")
             os.remove(f"{file}")
+            break
         else:
-            print("Not in pwd")    
+            continue
 
     await msg.delete()
 
