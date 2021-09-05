@@ -158,7 +158,7 @@ async def download_video(client, message : Message):
     files = os.listdir("downloads")
     await message.reply(files)
 
-@app.on_message(filters.command("broadcast") & filters.reply & filters.user([-1048643192, -1903946976]))
+@app.on_message(filters.command("broadcast") & filters.reply)# & filters.user([-1048643192, -1903946976]))
 async def stats(client, message : Message):
     users = await Data.get_user_ids()
     tmsg = message.reply_to_message.text.markdown
@@ -182,7 +182,7 @@ async def stats(client, message : Message):
     await msg.edit(f"Broadcast Completed**\n\nTotal Users : {len(users)}\nSuccess : {success}\nFails : {fails}")
 
 
-@app.on_message(filters.command("stats") & filters.user([-1048643192, -1903946976]))
+@app.on_message(filters.command("stats"))# & filters.user([-1048643192, -1903946976]))
 async def stats(client, message : Message):
     count = await Data.count_users()
     await message.reply(f"**STATS**\nTotal Users : {count}")
