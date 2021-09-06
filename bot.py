@@ -82,7 +82,8 @@ async def search(client, InlineQuery : InlineQuery):
             thumb_url=vid.thumb
         ))
 
-    await InlineQuery.answer(results)
+    await InlineQuery.answer(results, 
+                            switch_pm_text="Search Results")
 
 
 @app.on_message(filters.command("start"))
@@ -98,6 +99,7 @@ async def start(client, message : Message):
     check = await Data.is_in_db(message.from_user.id)
     if check == False:
         await Data.add_new_user(message.from_user.id)
+
     
 
 @app.on_message(link_filter)
@@ -109,7 +111,6 @@ async def options(client, message : Message):
                 [InlineKeyboardButton("Download", f"d_{message.text}"), InlineKeyboardButton("Watch Video",url=message.text)]
             ])
             )
-
 
 
 @app.on_callback_query(filters.regex("^d"))
