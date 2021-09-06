@@ -82,8 +82,7 @@ async def search(client, InlineQuery : InlineQuery):
             thumb_url=vid.thumb
         ))
 
-    await InlineQuery.answer(results, 
-                            switch_pm_text="Search Results")
+    await InlineQuery.answer(results)
 
 
 @app.on_message(filters.command("start"))
