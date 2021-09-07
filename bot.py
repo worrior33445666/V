@@ -158,14 +158,14 @@ async def download_video(client, callback : CallbackQuery):
 
     ydl_opts = {
             #'format': 'best',
-            'outtmpl': "downloads", 
-            'nooverwrites': True,
-            'no_warnings': False,
-            'ignoreerrors': True,
+            #'outtmpl': "downloads", 
+            # 'nooverwrites': True,
+            # 'no_warnings': False,
+            # 'ignoreerrors': True,
             "progress_hooks": [lambda d: download_progress_hook(d, callback.message, client)]
         }
 
-    with youtube_dl.YoutubeDL() as ydl:
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         # meta = ydl.extract_info(url, download=False)
         # formats = meta.get('formats', [meta])
         # btn_list = []
