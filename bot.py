@@ -138,6 +138,7 @@ def edit_msg(client, message, to_edit):
 
 def download_progress_hook(d, message, client):
     if d['status'] == 'downloading':
+        print("xyxyxyxxyxyx")
         current = d.get("_downloaded_bytes_str") or humanbytes(int(d.get("downloaded_bytes", 1)))
         total = d.get("_total_bytes_str") or d.get("_total_bytes_estimate_str")
         file_name = d.get("filename")
