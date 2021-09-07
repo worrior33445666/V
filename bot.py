@@ -160,7 +160,7 @@ async def download_video(client, callback : CallbackQuery):
         await callback.message.edit("Sorry! You can download only one video at a time")
         return
     else:
-        active_list.append()
+        active_list.append(user_id)
 
     ydl_opts = {
             #'format': 'best',
