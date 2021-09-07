@@ -26,6 +26,8 @@ else:
 btn1 = InlineKeyboardButton("Search Here",switch_inline_query_current_chat="",)
 btn2 = InlineKeyboardButton("Go Inline", switch_inline_query="")
 
+active_list = []
+
 
 async def run_async(func, *args, **kwargs):
     loop = asyncio.get_running_loop()
@@ -138,23 +140,27 @@ def edit_msg(client, message, to_edit):
 
 def download_progress_hook(d, message, client):
     if d['status'] == 'downloading':
-        print("xyxyxyxxyxyx")
         current = d.get("_downloaded_bytes_str") or humanbytes(int(d.get("downloaded_bytes", 1)))
         total = d.get("_total_bytes_str") or d.get("_total_bytes_estimate_str")
         file_name = d.get("filename")
         eta = d.get('_eta_str', "N/A")
         percent = d.get("_percent_str", "N/A")
         speed = d.get("_speed_str", "N/A")
-        to_edit = f"<b><u>Downloading File</b></u> \n<b>File Name :</b> <code>{file_name}</code> \n<b>File Size :</b> <code>{total}</code> \n<b>Speed :</b> <code>{speed}</code> \n<b>ETA :</b> <code>{eta}</code> \n<i>Download {current} out of {total}</i> (__{percent}__)"
+        to_edit = f"<b><u>Downloading File</b></u> \n<b>File Name :</b> <code>{file_name}</code> \n<b>File Size :</b> <code>{total}</code> \n<b>Speed :</b> <code>{speed}</code> \n<b>ETA :</b> <code>{eta}</code> \n<i>Downloaded {current} out of {total}</i> (__{percent}__)"
         threading.Thread(target=edit_msg, args=(client, message, to_edit)).start()
 
 
 @app.on_callback_query(filters.regex("^d"))
 async def download_video(client, callback : CallbackQuery):
-    print(callback.data)
     url = callback.data.split("_",1)[1]
-    print(url)
     msg = await callback.message.edit("Downloading...")
+    user_id = callback.message.from_user.id
+
+    if user_id in active_list:
+        await callback.message.edit("Sorry! You can download only one video at a time")
+        return
+    else:
+        active_list.append()
 
     ydl_opts = {
             #'format': 'best',
@@ -180,7 +186,6 @@ async def download_video(client, callback : CallbackQuery):
 
     for file in os.listdir('.'):
         if file.endswith(".mp4"):
-            print("found pwd")
             await callback.message.reply_video(f"{file}", caption="**Here Is your Requested Video**\n@SJ_Bots",
                                 reply_markup=InlineKeyboardMarkup([[btn1, btn2]]))
             os.remove(f"{file}")
