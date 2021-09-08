@@ -84,8 +84,8 @@ async def search(client, InlineQuery : InlineQuery):
         # vid.views
         # vid.title
         
-        pornstars = "N/A"#", ".join(vid.pornstars)
-        categories = "N/A"#, ".join(vid.categories)
+        pornstars = ", ".join(v for v in vid.pornstars)
+        categories = ", ".join(v for v in vid.categories)
         msg = (f"**TITLE** : `{vid.title}`\n"
                 f"**DURATION** : `{vid.duration}`\n"
                 f"VIEWS : `{vid.views}`\n\n"
