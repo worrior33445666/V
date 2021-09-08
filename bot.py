@@ -4,6 +4,7 @@ from pyrogram import Client, filters
 from pyrogram.types import (InlineQuery, InlineQueryResultArticle, CallbackQuery, InlineQueryResultPhoto,
                             InputTextMessageContent, Message, InlineKeyboardMarkup, InlineKeyboardButton)
 from pyrogram.errors.exceptions import UserNotParticipant, FloodWait, MessageNotModified
+from pyrogram.types.input_message_content.input_message_content import InputMessageContent
 import youtube_dl
 import os
 import asyncio
@@ -68,11 +69,28 @@ async def search(client, InlineQuery : InlineQuery):
     query = InlineQuery.query
     backend = AioHttpBackend()
     api = PornhubApi(backend=backend)
-    src = await api.search.search(query)#, ordering="mostviewed")
+    results = []
+    try:
+        src = await api.search.search(query)#, ordering="mostviewed")
+    except ValueError as e:
+        if e['code'] == 2001:
+            results.append(InlineQueryResultArticle(
+                title="No Such Videos Found!",
+                description="Sorry! No Such Vedos Were Found. Plz Try Again",
+                input_message_content=InputTextMessageContent(
+                    message_text="No Such Videos Found!"
+                )
+            ))
+            await InlineQuery.answer(results,
+                            switch_pm_text="Search Results",
+                            switch_pm_parameter="start")
+            
+        return
+
+
     videos = src.videos
     await backend.close()
 
-    results = []
 
     for vid in videos:
         # vid.categories
@@ -83,9 +101,13 @@ async def search(client, InlineQuery : InlineQuery):
         # vid.tags
         # vid.views
         # vid.title
-        
-        pornstars = ", ".join(v for v in vid.pornstars)
-        categories = ", ".join(v for v in vid.categories)
+
+        try:
+            pornstars = ", ".join(v for v in vid.pornstars)
+            categories = ", ".join(v for v in vid.categories)
+        except:
+            pornstars = "N/A"
+            categories = "N/A"
         msg = (f"**TITLE** : `{vid.title}`\n"
                 f"**DURATION** : `{vid.duration}`\n"
                 f"VIEWS : `{vid.views}`\n\n"
