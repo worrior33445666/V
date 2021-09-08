@@ -71,7 +71,6 @@ async def search(client, InlineQuery : InlineQuery):
     src = await api.search.search(query)#, ordering="mostviewed")
     videos = src.videos
     await backend.close()
-    
 
     results = []
 
@@ -84,8 +83,9 @@ async def search(client, InlineQuery : InlineQuery):
         # vid.tags
         # vid.views
         # vid.title
-        pornstars = ", ".join(vid.pornstars)
-        categories = ", ".join(vid.categories)
+        
+        pornstars = "N/A"#", ".join(vid.pornstars)
+        categories = "N/A"#, ".join(vid.categories)
         msg = (f"**TITLE** : `{vid.title}`\n"
                 f"**DURATION** : `{vid.duration}`\n"
                 f"VIEWS : `{vid.views}`\n\n"
