@@ -68,7 +68,7 @@ async def search(client, InlineQuery : InlineQuery):
     query = InlineQuery.query
     backend = AioHttpBackend()
     api = PornhubApi(backend=backend)
-    src = api.search.search(query)#, ordering="mostviewed")
+    src = await api.search.search(query)#, ordering="mostviewed")
     videos = src.videos
     await backend.close()
     
