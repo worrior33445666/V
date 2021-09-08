@@ -1,7 +1,7 @@
 from pornhub_api import PornhubApi
 from pornhub_api.backends.aiohttp import AioHttpBackend
 from pyrogram import Client, filters
-from pyrogram.types import (InlineQuery, InlineQueryResultArticle, CallbackQuery,
+from pyrogram.types import (InlineQuery, InlineQueryResultArticle, CallbackQuery, InlineQueryResultPhoto,
                             InputTextMessageContent, Message, InlineKeyboardMarkup, InlineKeyboardButton)
 from pyrogram.errors.exceptions import UserNotParticipant, FloodWait, MessageNotModified
 import youtube_dl
@@ -68,7 +68,7 @@ async def search(client, InlineQuery : InlineQuery):
     query = InlineQuery.query
     backend = AioHttpBackend()
     api = PornhubApi(backend=backend)
-    src = await api.search.search(query)#, ordering="mostviewed")
+    src = api.search.search(query)#, ordering="mostviewed")
     videos = src.videos
     await backend.close()
     
@@ -76,13 +76,32 @@ async def search(client, InlineQuery : InlineQuery):
     results = []
 
     for vid in videos:
+        # vid.categories
+        # vid.duration
+        # vid.pornstars
+        # vid.thumb
+        # vid.url
+        # vid.tags
+        # vid.views
+        # vid.title
+        pornstars = ", ".join(vid.pornstars)
+        categories = ", ".join(vid.categories)
+        msg = (f"**TITLE** : `{vid.title}`\n"
+                f"**DURATION** : `{vid.duration}`\n"
+                f"VIEWS : `{vid.views}`\n\n"
+                f"**{pornstars}**\n"
+                f"Categories : {categories}")
+
+         
         results.append(InlineQueryResultArticle(
             title=vid.title,
             input_message_content=InputTextMessageContent(
-                message_text=f"{vid.url}"
+                message_text=msg,
+                disable_web_page_preview=True,
             ),
             description=f"Duration : {vid.duration}\nViews : {vid.views}\nRating : {vid.rating}",
-            thumb_url=vid.thumb
+            thumb_url=vid.thumb,
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Watch Video", url=vid.url)]]),
         ))
 
     await InlineQuery.answer(results,
