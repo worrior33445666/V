@@ -112,30 +112,33 @@ async def search(client, InlineQuery : InlineQuery):
                 f"**DURATION** : `{vid.duration}`\n"
                 f"VIEWS : `{vid.views}`\n\n"
                 f"**{pornstars}**\n"
-                f"Categories : {categories}")
+                f"Categories : {categories}\n\n"
+                f"Link : {vid.url}")
 
-        results.append(InlineQueryResultPhoto(
-            photo_url=vid.thumb,
-            thumb_url=vid.thumb,
-            title=vid.title,
-            input_message_content=InputTextMessageContent(
-                message_text=msg,
-                disable_web_page_preview=True,
-            ),
-            description=f"Duration : {vid.duration}\nViews : {vid.views}\nRating : {vid.rating}",
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Watch Video", url=vid.url)]]),
-        ))
-         
-        # results.append(InlineQueryResultArticle(
+        # results.append(InlineQueryResultPhoto(
+        #     photo_url=vid.thumb,
+        #     thumb_url=vid.thumb,
         #     title=vid.title,
         #     input_message_content=InputTextMessageContent(
         #         message_text=msg,
         #         disable_web_page_preview=True,
         #     ),
         #     description=f"Duration : {vid.duration}\nViews : {vid.views}\nRating : {vid.rating}",
-        #     thumb_url=vid.thumb,
         #     reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Watch Video", url=vid.url)]]),
         # ))
+         
+        results.append(InlineQueryResultArticle(
+            title=vid.title,
+            input_message_content=InputTextMessageContent(
+                message_text=msg,
+            ),
+            description=f"Duration : {vid.duration}\nViews : {vid.views}\nRating : {vid.rating}",
+            thumb_url=vid.thumb,
+            reply_markup=InlineKeyboardMarkup([[
+                InlineKeyboardButton("Watch Video", url=vid.url),
+                btn1
+            ]]),
+        ))
 
     await InlineQuery.answer(results,
                             switch_pm_text="Search Results",
