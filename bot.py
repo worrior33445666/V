@@ -95,7 +95,8 @@ async def search(client, InlineQuery : InlineQuery):
 async def start(client, message : Message):
     await message.reply(f"Hello @{message.from_user.username},\n"
                         "━━━━━━━━━━━━━━━━━━━━━\n"
-                        "This Bot Can Search PornHub Videos & Download Them For You\n"
+                        "This Bot Can Search PornHub"
+                        "Videos & Download Them For You\n"
                         "━━━━━━━━━━━━━━━━━━━━━\n"
                         "⚠️The Bot Contains 18+ Content\n"
                         "So Kindly Access it with Your own\n"
