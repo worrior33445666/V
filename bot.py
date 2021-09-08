@@ -92,17 +92,28 @@ async def search(client, InlineQuery : InlineQuery):
                 f"**{pornstars}**\n"
                 f"Categories : {categories}")
 
-         
-        results.append(InlineQueryResultArticle(
+        results.append(InlineQueryResultPhoto(
+            photo_url=vid.thumb,
+            thumb_url=vid.thumb,
             title=vid.title,
             input_message_content=InputTextMessageContent(
                 message_text=msg,
                 disable_web_page_preview=True,
             ),
             description=f"Duration : {vid.duration}\nViews : {vid.views}\nRating : {vid.rating}",
-            thumb_url=vid.thumb,
             reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Watch Video", url=vid.url)]]),
         ))
+         
+        # results.append(InlineQueryResultArticle(
+        #     title=vid.title,
+        #     input_message_content=InputTextMessageContent(
+        #         message_text=msg,
+        #         disable_web_page_preview=True,
+        #     ),
+        #     description=f"Duration : {vid.duration}\nViews : {vid.views}\nRating : {vid.rating}",
+        #     thumb_url=vid.thumb,
+        #     reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Watch Video", url=vid.url)]]),
+        # ))
 
     await InlineQuery.answer(results,
                             switch_pm_text="Search Results",
