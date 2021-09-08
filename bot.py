@@ -85,17 +85,25 @@ async def search(client, InlineQuery : InlineQuery):
             thumb_url=vid.thumb
         ))
 
-    await InlineQuery.answer(results)
+    await InlineQuery.answer(results,
+                            switch_pm_text="Search Results",
+                            switch_pm_parameter="start")
 
 
 @app.on_message(filters.command("start"))
 @joined()
 async def start(client, message : Message):
-    await message.reply(f"**Hello, @{message.from_user.username}**,\n"
-                        "➖➖➖➖➖➖➖➖➖➖➖➖\n"
-                        "This Bot Can Search **Pornhub** Videos\n"
-                        "And Download Them For You\n"
-                        "➖➖➖➖➖➖➖➖➖➖➖➖\n"
+    await message.reply(f"Hello @{message.from_user.username},\n"
+                        "━━━━━━━━━━━━━━━━━━━━━\n"
+                        "This Bot Can Search PornHub Videos & Download Them For You\n"
+                        "━━━━━━━━━━━━━━━━━━━━━\n"
+                        "⚠️The Bot Contains 18+ Content\n"
+                        "So Kindly Access it with Your own\n"
+                        "Risk. Children Please Stay Away.\n" 
+                        "We don't intend to spread Pørno-\n"
+                        "-graphy here. It's just a bot for a\n" 
+                        "purpose as many of them wanted.\n" 
+                        "━━━━━━━━━━━━━━━━━━━━━\n"
                         "Click The Buttons Below To Search", reply_markup=InlineKeyboardMarkup([[btn1, btn2]]))
 
     check = await Data.is_in_db(message.from_user.id)
@@ -194,6 +202,7 @@ async def download_video(client, callback : CallbackQuery):
             continue
 
     await msg.delete()
+    active_list.remove(user_id)
 
 
 @app.on_message(filters.command("cc"))
