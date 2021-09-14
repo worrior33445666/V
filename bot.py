@@ -28,6 +28,7 @@ btn1 = InlineKeyboardButton("Search Here",switch_inline_query_current_chat="",)
 btn2 = InlineKeyboardButton("Go Inline", switch_inline_query="")
 
 active_list = []
+queue = []
 
 
 async def run_async(func, *args, **kwargs):
@@ -54,7 +55,7 @@ def joined():
                 if check.status in ['member','administrator','creator']:
                     await func(client, message)
                 else:
-                    await message.reply("💡 You must join our channel in order to use this bot",
+                    await message.reply("💡 You must join our channel in order to use this bot.\n/start the bot again after joining",
                     reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("JOIN CHANNEL", url="https://t.me/SJ_Bots")]]))
             except UserNotParticipant as e:
                 await message.reply("💡 You must join our channel in order to use this bot",
@@ -73,15 +74,14 @@ async def search(client, InlineQuery : InlineQuery):
     try:
         src = await api.search.search(query)#, ordering="mostviewed")
     except ValueError as e:
-        if e['code'] == 2001:
-            results.append(InlineQueryResultArticle(
+        results.append(InlineQueryResultArticle(
                 title="No Such Videos Found!",
                 description="Sorry! No Such Vedos Were Found. Plz Try Again",
                 input_message_content=InputTextMessageContent(
                     message_text="No Such Videos Found!"
                 )
             ))
-            await InlineQuery.answer(results,
+        await InlineQuery.answer(results,
                             switch_pm_text="Search Results",
                             switch_pm_parameter="start")
             
@@ -105,27 +105,18 @@ async def search(client, InlineQuery : InlineQuery):
         try:
             pornstars = ", ".join(v for v in vid.pornstars)
             categories = ", ".join(v for v in vid.categories)
+            tags = ", #".join(v for v in vid.tags)
         except:
             pornstars = "N/A"
             categories = "N/A"
+            tags = "N/A"
         msg = (f"**TITLE** : `{vid.title}`\n"
                 f"**DURATION** : `{vid.duration}`\n"
                 f"VIEWS : `{vid.views}`\n\n"
                 f"**{pornstars}**\n"
                 f"Categories : {categories}\n\n"
+                f"{tags}"
                 f"Link : {vid.url}")
-
-        # results.append(InlineQueryResultPhoto(
-        #     photo_url=vid.thumb,
-        #     thumb_url=vid.thumb,
-        #     title=vid.title,
-        #     input_message_content=InputTextMessageContent(
-        #         message_text=msg,
-        #         disable_web_page_preview=True,
-        #     ),
-        #     description=f"Duration : {vid.duration}\nViews : {vid.views}\nRating : {vid.rating}",
-        #     reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Watch Video", url=vid.url)]]),
-        # ))
          
         results.append(InlineQueryResultArticle(
             title=vid.title,
@@ -220,11 +211,11 @@ async def download_video(client, callback : CallbackQuery):
     msg = await callback.message.edit("Downloading...")
     user_id = callback.message.from_user.id
 
-#     if user_id in active_list:
-#         await callback.message.edit("Sorry! You can download only one video at a time")
-#         return
-#     else:
-#         active_list.append(user_id)
+    if user_id in active_list:
+        await callback.message.edit("Sorry! You can download only one video at a time")
+        return
+    else:
+        active_list.append(user_id)
 
     ydl_opts = {
             #'format': 'best',
