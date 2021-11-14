@@ -6,6 +6,7 @@ from pyrogram.types import (InlineQuery, InlineQueryResultArticle, CallbackQuery
 from pyrogram.errors.exceptions import UserNotParticipant, FloodWait, MessageNotModified
 from pyrogram.types.input_message_content.input_message_content import InputMessageContent
 import youtube_dl
+from youtube_dl.utils import DownloadError
 import os
 import asyncio
 import threading
@@ -238,8 +239,11 @@ async def download_video(client, callback : CallbackQuery):
         #     print(f)
 
         # await callback.message.edit("Choose your desired Quality", reply_markup=ikb(btn_list))
+        try:
+            await run_async(ydl.download, [url])
+        except DownloadError:
+            await callback.message.edit("Sorry, There was a problem with that particular video")
 
-        await run_async(ydl.download, [url])
 
     for file in os.listdir('.'):
         if file.endswith(".mp4"):
