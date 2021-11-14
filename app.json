@@ -6,17 +6,17 @@
         "API_ID": {
             "description": "You api id, from my.telegram.org or @ScrapperRoBot.",
             "value": "", 
-            "required": false
+            "required": true
         },
         "API_HASH": {
             "description": "You api hash, from my.telegram.org or @ScrapperRoBot.",
             "value": "", 
-            "required": false
+            "required": true
         },
         "BOT_TOKEN": {
             "description": "You Bot Token from @BotFather.",
             "value": "", 
-            "required": false
+            "required": true
         }
     }
 }
