@@ -1,19 +1,19 @@
+import asyncio
+import os
+
+import youtube_dl
 from pornhub_api import PornhubApi
 from pornhub_api.backends.aiohttp import AioHttpBackend
 from pyrogram import Client, filters
-from pyrogram.types import (InlineQuery, InlineQueryResultArticle, CallbackQuery, InlineQueryResultPhoto,
-                            InputTextMessageContent, Message, InlineKeyboardMarkup, InlineKeyboardButton)
-from pyrogram.errors.exceptions import UserNotParticipant, FloodWait, MessageNotModified
-from pyrogram.types.input_message_content.input_message_content import InputMessageContent
-import youtube_dl
+from pyrogram.errors.exceptions import UserNotParticipant
+from pyrogram.types import (CallbackQuery, InlineKeyboardButton,
+                            InlineKeyboardMarkup, InlineQuery,
+                            InlineQueryResultArticle, InputTextMessageContent,
+                            Message)
 from youtube_dl.utils import DownloadError
-import os
-import asyncio
-import threading
 
 from config import Config
-from database import Data
-from pyromod.helpers import ikb
+from helpers import download_progress_hook
 
 app = Client("pornhub_bot",
             api_id=Config.API_ID,
@@ -155,11 +155,6 @@ async def start(client, message : Message):
                         "purpose as many of them wanted.\n" 
                         "━━━━━━━━━━━━━━━━━━━━━\n"
                         "Click The Buttons Below To Search", reply_markup=InlineKeyboardMarkup([[btn1, btn2]]))
-
-    check = await Data.is_in_db(message.from_user.id)
-    if check == False:
-        await Data.add_new_user(message.from_user.id)
-
     
 
 @app.on_message(link_filter)
@@ -171,41 +166,6 @@ async def options(client, message : Message):
                 [InlineKeyboardButton("Download", f"d_{message.text}"), InlineKeyboardButton("Watch Video",url=message.text)]
             ])
             )
-
-def humanbytes(size):
-    """Convert Bytes To Bytes So That Human Can Read It"""
-    if not size:
-        return ""
-    power = 2 ** 10
-    raised_to_pow = 0
-    dict_power_n = {0: "", 1: "Ki", 2: "Mi", 3: "Gi", 4: "Ti"}
-    while size > power:
-        size /= power
-        raised_to_pow += 1
-    return str(round(size, 2)) + " " + dict_power_n[raised_to_pow] + "B"
-
-
-def edit_msg(client, message, to_edit):
-    try:
-        client.loop.create_task(message.edit(to_edit))
-    except MessageNotModified:
-        pass
-    except FloodWait as e:
-        client.loop.create_task(asyncio.sleep(e.x))
-    except TypeError:
-        pass
-
-
-def download_progress_hook(d, message, client):
-    if d['status'] == 'downloading':
-        current = d.get("_downloaded_bytes_str") or humanbytes(int(d.get("downloaded_bytes", 1)))
-        total = d.get("_total_bytes_str") or d.get("_total_bytes_estimate_str")
-        file_name = d.get("filename")
-        eta = d.get('_eta_str', "N/A")
-        percent = d.get("_percent_str", "N/A")
-        speed = d.get("_speed_str", "N/A")
-        to_edit = f"<b><u>Downloading File</b></u> \n<b>File Name :</b> <code>{file_name}</code> \n<b>File Size :</b> <code>{total}</code> \n<b>Speed :</b> <code>{speed}</code> \n<b>ETA :</b> <code>{eta}</code> \n<i>Downloaded {current} out of {total}</i> (__{percent}__)"
-        threading.Thread(target=edit_msg, args=(client, message, to_edit)).start()
 
 
 @app.on_callback_query(filters.regex("^d"))
@@ -263,35 +223,6 @@ async def download_video(client, callback : CallbackQuery):
 async def download_video(client, message : Message):
     files = os.listdir("downloads")
     await message.reply(files)
-
-@app.on_message(filters.command("broadcast") & filters.reply)# & filters.user([-1048643192, -1903946976]))
-async def stats(client, message : Message):
-    users = await Data.get_user_ids()
-    tmsg = message.reply_to_message.text.markdown
-
-    msg = await message.reply("Broadcast started")
-
-    fails = 0
-    success = 0
-
-    for user in users:
-        try:
-            await app.send_message(int(user), tmsg)
-            success += 1
-        except:
-            fails += 1
-
-        quotient = (fails + success)/len(users)
-        percentage = float(quotient * 100)
-        await msg.edit(f"**Broadcast started**\n\nTotal Users : {len(users)}\nProgress : {percentage} %")
-
-    await msg.edit(f"Broadcast Completed**\n\nTotal Users : {len(users)}\nSuccess : {success}\nFails : {fails}")
-
-
-@app.on_message(filters.command("stats"))# & filters.user([-1048643192, -1903946976]))
-async def stats(client, message : Message):
-    count = await Data.count_users()
-    await message.reply(f"**STATS**\nTotal Users : {count}")
 
 
 
