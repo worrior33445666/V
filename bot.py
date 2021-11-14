@@ -74,14 +74,6 @@ async def search(client, InlineQuery : InlineQuery):
     
 
     for vid in videos:
-        # vid.categories
-        # vid.duration
-        # vid.pornstars
-        # vid.thumb
-        # vid.url
-        # vid.tags
-        # vid.views
-        # vid.title
 
         try:
             pornstars = ", ".join(v for v in vid.pornstars)
@@ -159,24 +151,10 @@ async def download_video(client, callback : CallbackQuery):
         active_list.append(user_id)
 
     ydl_opts = {
-            #'format': 'best',
-            #'outtmpl': "downloads", 
-            # 'nooverwrites': True,
-            # 'no_warnings': False,
-            # 'ignoreerrors': True,
             "progress_hooks": [lambda d: download_progress_hook(d, callback.message, client)]
         }
 
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        # meta = ydl.extract_info(url, download=False)
-        # formats = meta.get('formats', [meta])
-        # btn_list = []
-        # for f in formats:
-        #    btn_list.append([(f['resolution'], f"q_{f['ext']}_{url}")])
-        #    print(f['resolution'])
-        #     print(f)
-
-        # await callback.message.edit("Choose your desired Quality", reply_markup=ikb(btn_list))
         try:
             await run_async(ydl.download, [url])
         except DownloadError:
