@@ -45,26 +45,6 @@ def link_fil(filter, client, update):
 
 link_filter = filters.create(link_fil, name="link_filter")
 
-def joined():
-
-    def decorator(func):
-
-        async def wrapped(client, message : Message):
-
-            try:
-                check = await app.get_chat_member("SJ_Bots", message.from_user.id)
-                if check.status in ['member','administrator','creator']:
-                    await func(client, message)
-                else:
-                    await message.reply("💡 You must join our channel in order to use this bot.\n/start the bot again after joining",
-                    reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("JOIN CHANNEL", url="https://t.me/SJ_Bots")]]))
-            except UserNotParticipant as e:
-                await message.reply("💡 You must join our channel in order to use this bot",
-                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("JOIN CHANNEL", url="https://t.me/SJ_Bots")]]))
-
-        return wrapped
-
-    return decorator
 
 @app.on_inline_query()
 async def search(client, InlineQuery : InlineQuery):
@@ -140,7 +120,6 @@ async def search(client, InlineQuery : InlineQuery):
 
 
 @app.on_message(filters.command("start"))
-@joined()
 async def start(client, message : Message):
     await message.reply(f"Hello @{message.from_user.username},\n"
                         "━━━━━━━━━━━━━━━━━━━━━\n"
@@ -158,7 +137,6 @@ async def start(client, message : Message):
     
 
 @app.on_message(link_filter)
-@joined()
 async def options(client, message : Message):
     print(message.text)
     await message.reply("What would like to do?", 
