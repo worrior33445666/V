@@ -243,6 +243,7 @@ async def download_video(client, callback : CallbackQuery):
             await run_async(ydl.download, [url])
         except DownloadError:
             await callback.message.edit("Sorry, There was a problem with that particular video")
+            return
 
 
     for file in os.listdir('.'):
