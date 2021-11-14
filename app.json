@@ -1,6 +1,7 @@
 {
     "name": "Pornhub Bot",
     "description": "Telegram bot to search and download pornhub videos",
+    "keywords": ["pornhub", "python", "telegram"],
     "env": {
         "API_ID": {
             "description": "You api id, from my.telegram.org or @ScrapperRoBot.",
