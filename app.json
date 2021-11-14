@@ -1,0 +1,22 @@
+{
+    "name": "Pornhub Bot",
+    "description": "Telegram bot to search and download pornhub videos",
+    "logo": "https://telegra.ph/file/031957757a4f6a5191040.jpg",
+    "env": {
+        "API_ID": {
+            "description": "You api id, from my.telegram.org or @ScrapperRoBot.",
+            "value": "", 
+            "required": false
+        },
+        "API_HASH": {
+            "description": "You api id, from my.telegram.org or @ScrapperRoBot.",
+            "value": "", 
+            "required": false
+        },
+        "BOT_TOKEN": {
+            "description": "You Bot Token from @BotFather.",
+            "value": "", 
+            "required": false
+        }
+    }
+}
