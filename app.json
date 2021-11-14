@@ -9,7 +9,7 @@
             "required": false
         },
         "API_HASH": {
-            "description": "You api id, from my.telegram.org or @ScrapperRoBot.",
+            "description": "You api hash, from my.telegram.org or @ScrapperRoBot.",
             "value": "", 
             "required": false
         },
