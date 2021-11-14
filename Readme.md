@@ -1,17 +1,19 @@
 # Pornhub Bot (TG)
 
-This is a pornhub bot made for telegram. It can search and download pornhub videos for you
+This is a Pornhub bot made for telegram. It can search and download Pornhub videos for you
+
+Find a Demo Here - [@SjPornhub_bot](https://telegram.me/SjPornhub_bot)
 
 # Deployment
-## --> Heroku
+## Heroku
 
-Get the neccesary variables and deploy your own bot to heroku.
+Get the necessary variables and deploy your own bot to Heroku.
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/sohag02/Pornhub-Bot)
 
 ## Railway
 
-Get the neccesary variables and deploy your own bot to Railway.
+Get the necessary variables and deploy your own bot to Railway.
 
 
 [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https%3A%2F%2Fgithub.com%2Fsohag02%2FPornhub-Bot)
